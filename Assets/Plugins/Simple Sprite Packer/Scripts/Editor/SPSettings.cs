@@ -77,7 +77,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(6f);
-            GUILayout.Label("Thumbs Max Height: " + EditorPrefs.GetFloat(SPTools.Settings_ThumbsHeightKey).ToString(), GUILayout.Width(150f));
+            GUILayout.Label($"Thumbs Max Height: {EditorPrefs.GetFloat(SPTools.Settings_ThumbsHeightKey)}", GUILayout.Width(150f));
             GUI.changed = false;
             float th = GUILayout.HorizontalSlider(EditorPrefs.GetFloat(SPTools.Settings_ThumbsHeightKey), 20f, 200f, GUILayout.ExpandWidth(true));
             if (GUI.changed)
@@ -94,12 +94,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             GUILayout.BeginHorizontal();
             GUILayout.Space(6f);
             GUI.changed = false;
-            bool ssv = GUILayout.Toggle(EditorPrefs.GetBool(SPTools.Settings_UseScrollViewKey), " Use scroll view for sprites ?");
-            if (GUI.changed)
-            {
-                EditorPrefs.SetBool(SPTools.Settings_UseScrollViewKey, ssv);
-                InvokeRepaint();
-            }
+           
 
             GUILayout.Space(6f);
             GUILayout.EndHorizontal();
@@ -108,14 +103,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(6f);
-            GUILayout.Label("Scroll View Height: " + EditorPrefs.GetFloat(SPTools.Settings_ScrollViewHeightKey).ToString(), GUILayout.Width(150f));
-            GUI.changed = false;
-            float svs = GUILayout.HorizontalSlider(EditorPrefs.GetFloat(SPTools.Settings_ScrollViewHeightKey), 40f, 500f, GUILayout.ExpandWidth(true));
-            if (GUI.changed)
-            {
-                EditorPrefs.SetFloat(SPTools.Settings_ScrollViewHeightKey, Mathf.Round(svs));
-                InvokeRepaint();
-            }
+           
 
             GUILayout.Space(6f);
             GUILayout.EndHorizontal();

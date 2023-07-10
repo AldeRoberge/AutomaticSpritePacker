@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using SimpleSpritePacker;
 using UnityEditor;
 using UnityEngine;
@@ -45,8 +46,10 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Texture"), new GUIContent("Atlas Texture"));
             EditorGUILayout.Space();
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Padding"), new GUIContent("Packing Padding"));
             MaxSizePopup(serializedObject.FindProperty("m_MaxSize"), "Packing Max Size");
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_PackingMethod"));
@@ -61,43 +64,25 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             GUI.enabled = true;
 
             serializedObject.ApplyModifiedProperties();
+            EditorGUILayout.Space();
 
+            DrawPendingActions();
             EditorGUILayout.Space();
-            DrawCurrentSprites();
+
+            DropAreaGUI();
             EditorGUILayout.Space();
-            if (m_SPInstance.pendingActions.Count > 0)
+
+            if (m_SPInstance.includedFolders.Count > 0)
             {
                 DrawActionButtons();
                 EditorGUILayout.Space();
             }
-
-            DrawPendingActions();
-            EditorGUILayout.Space();
-            DrawActionButtons();
-            EditorGUILayout.Space();
-            DropAreaGUI();
         }
 
         private void DrawActionButtons()
         {
             // Get a rect for the buttons
             Rect controlRect = EditorGUILayout.GetControlRect();
-
-            // Clear Actions Button
-            controlRect.width = (controlRect.width / 2f) - 6f;
-
-            if (m_SPInstance.pendingActions.Count == 0)
-                GUI.enabled = false;
-
-            if (GUI.Button(controlRect, "Clear Actions", EditorStyles.miniButton))
-            {
-                m_SPInstance.ClearActions();
-            }
-
-            GUI.enabled = true;
-
-            // Rebuild Button
-            controlRect.x = controlRect.width + 24f;
 
             if (GUI.Button(controlRect, "Rebuild Atlas", EditorStyles.miniButton))
             {
@@ -119,319 +104,51 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             }
         }
 
-        private void DrawCurrentSprites()
-        {
-            if (m_SPInstance == null)
-                return;
-
-            Rect controlRect = EditorGUILayout.GetControlRect();
-            GUI.Label(controlRect, "Sprites (" + m_SPInstance.sprites.Count.ToString() + ")", EditorStyles.boldLabel);
-
-            GUI.Label(new Rect(controlRect.width - 120f, controlRect.y, 70f, 20f), "Scrollview");
-
-            GUI.changed = false;
-            bool sv = GUI.Toggle(new Rect(controlRect.width - 55f, controlRect.y + 1f, 20f, 20f), EditorPrefs.GetBool(SPTools.Settings_UseScrollViewKey), " ");
-            if (GUI.changed)
-            {
-                EditorPrefs.SetBool(SPTools.Settings_UseScrollViewKey, sv);
-            }
-
-            GUI.Label(new Rect(controlRect.width - 40f, controlRect.y, 40f, 20f), "Show");
-
-            GUI.changed = false;
-            bool ss = GUI.Toggle(new Rect(controlRect.width - 2f, controlRect.y + 1f, 20f, 20f), EditorPrefs.GetBool(SPTools.Settings_ShowSpritesKey), " ");
-            if (GUI.changed)
-            {
-                EditorPrefs.SetBool(SPTools.Settings_ShowSpritesKey, ss);
-            }
-
-            if (EditorPrefs.GetBool(SPTools.Settings_ShowSpritesKey))
-            {
-                if (m_SPInstance.sprites.Count == 0)
-                {
-                    DrawMessage("The atlas does not contain sprites.");
-                    return;
-                }
-
-                EditorGUILayout.BeginVertical(boxStyle);
-
-                if (EditorPrefs.GetBool(SPTools.Settings_UseScrollViewKey))
-                {
-                    scrollViewOffset = EditorGUILayout.BeginScrollView(scrollViewOffset, GUILayout.Height(EditorPrefs.GetFloat(SPTools.Settings_ScrollViewHeightKey)));
-                }
-
-                if (EditorPrefs.GetBool(SPTools.Settings_UseSpriteThumbsKey))
-                {
-                    DrawSpritesWithThumbs();
-                }
-                else
-                {
-                    DrawSpritesSimple();
-                }
-
-                if (EditorPrefs.GetBool(SPTools.Settings_UseScrollViewKey))
-                {
-                    EditorGUILayout.EndScrollView();
-                }
-
-                EditorGUILayout.EndVertical();
-            }
-        }
 
         private Color c;
-
-        private void DrawSpritesWithThumbs()
-        {
-            // Get a copy of the sprites list
-            var sprites = m_SPInstance.copyOfSprites;
-            sprites.Sort();
-
-            EditorGUILayout.BeginHorizontal();
-            GUILayout.Space(6f);
-            EditorGUILayout.BeginVertical();
-
-            RectOffset padding = paddingStyle.padding;
-            RectOffset thumbnailPadding = new RectOffset(6, 6, 6, 3);
-            float thumbnailMaxHeight = EditorPrefs.GetFloat(SPTools.Settings_ThumbsHeightKey);
-            float labelHeight = 20f;
-            float selectedExtensionHeight = 27f;
-
-            GUIStyle labelStyle = new GUIStyle(EditorStyles.label)
-            {
-                fontStyle = FontStyle.Normal,
-                alignment = TextAnchor.MiddleCenter
-            };
-
-            // Draw the sprites
-            foreach (SPSpriteInfo info in sprites)
-            {
-                bool isSelected = IsSelected(info.GetHashCode());
-                Color boxColor = (isSelected ? spriteBoxHighlightColor : spriteBoxNormalColor);
-
-                GUILayout.Space(6f);
-                EditorGUILayout.BeginHorizontal(paddingStyle);
-
-                if (info.targetSprite != null)
-                {
-                    // Determine the control height
-                    float thumbnailHeight = (info.targetSprite.rect.height > thumbnailMaxHeight) ? thumbnailMaxHeight : info.targetSprite.rect.height;
-
-                    // Apply the thumb padding to the height
-                    float thumbnailHeightWithPadding = thumbnailHeight + thumbnailPadding.top + thumbnailPadding.bottom;
-
-                    // Generate a working rect for the control
-                    Rect controlRect = GUILayoutUtility.GetRect(0.0f, (thumbnailHeightWithPadding + labelHeight + (isSelected ? (selectedExtensionHeight + padding.top) : 0f)), GUILayout.ExpandWidth(true));
-
-                    // Determine the click rect
-                    Rect clickRect = new Rect(controlRect.x, controlRect.y, controlRect.width, (controlRect.height - (isSelected ? (selectedExtensionHeight + padding.top) : 0f)));
-
-                    // Sprite box background
-                    GUI.color = boxColor;
-                    GUI.Box(new Rect(controlRect.x - padding.left, controlRect.y - padding.top, controlRect.width + (padding.left + padding.right), controlRect.height + (padding.top + padding.bottom)), "", boxStyle);
-                    GUI.color = Color.white;
-
-                    // Draw the thumbnail
-                    if (info.targetSprite.texture != null)
-                        DrawThumbnail(info, thumbnailHeight, controlRect, thumbnailPadding);
-
-                    // Draw the sprite name label
-                    GUI.Label(new Rect(controlRect.x, (controlRect.y + thumbnailHeightWithPadding + 1f), controlRect.width, labelHeight), info.targetSprite.name + " (" + info.targetSprite.rect.width + "x" + info.targetSprite.rect.height + ")", labelStyle);
-
-                    // Remove button
-                    if (GUI.Button(new Rect((controlRect.width - 9f), (controlRect.y + thumbnailHeightWithPadding + 2f), 18f, 18f), "X"))
-                    {
-                        m_SPInstance.QueueAction_RemoveSprite(info);
-                    }
-                    // Detect sprite clicks
-                    else if (Event.current.type == EventType.MouseUp && clickRect.Contains(Event.current.mousePosition))
-                    {
-                        EditorGUIUtility.PingObject(info.targetSprite);
-
-                        // Remove the focus of the focused control
-                        GUI.FocusControl("");
-
-                        // Set as selected
-                        if (!isSelected) SetSelected(info.GetHashCode());
-                    }
-
-                    // Draw the selected extension
-                    if (isSelected)
-                    {
-                        Rect extensionRect = new Rect((controlRect.x - padding.left),
-                            (controlRect.y + thumbnailHeightWithPadding + labelHeight + padding.top),
-                            (controlRect.width + (padding.left + padding.right)),
-                            selectedExtensionHeight);
-
-                        // Box that looks like a separator
-                        if (Event.current.type == EventType.Repaint)
-                        {
-                            GUI.color = boxColor;
-                            boxStyle.Draw(new Rect(extensionRect.x, extensionRect.y, extensionRect.width, 1f), GUIContent.none, 0);
-                            GUI.color = Color.white;
-                        }
-
-                        // Draw the source label
-                        GUI.Label(new Rect(extensionRect.x + padding.left + 2f, extensionRect.y + padding.top + 3f, 60f, 20f), "Source:", EditorStyles.label);
-
-                        Rect sourceFieldRect = new Rect((extensionRect.x + 60f), (extensionRect.y + padding.top + 3f), (extensionRect.width - 66f), 18f);
-
-                        // Draw the sprite source field
-                        EditorGUI.BeginChangeCheck();
-                        Object source = EditorGUI.ObjectField(sourceFieldRect, info.source, typeof(Object), false);
-                        if (EditorGUI.EndChangeCheck())
-                            m_SPInstance.ChangeSpriteSource(info, source);
-                    }
-                }
-
-                EditorGUILayout.EndHorizontal();
-            }
-
-            GUILayout.Space(6f);
-
-            EditorGUILayout.EndVertical();
-            GUILayout.Space(6f);
-            EditorGUILayout.EndHorizontal();
-        }
-
-        private void DrawThumbnail(SPSpriteInfo info, float height, Rect controlRect, RectOffset padding)
-        {
-            // Calculate the sprite rect inside the texture
-            Rect spriteRect = new Rect(info.targetSprite.textureRect.x / info.targetSprite.texture.width,
-                info.targetSprite.textureRect.y / info.targetSprite.texture.height,
-                info.targetSprite.textureRect.width / info.targetSprite.texture.width,
-                info.targetSprite.textureRect.height / info.targetSprite.texture.height);
-
-            // Get the original sprite size
-            Vector2 spriteSize = new Vector2(info.targetSprite.rect.width, info.targetSprite.rect.height);
-
-            // Determine the max size of the thumb
-            Vector2 thumbMaxSize = new Vector2((controlRect.width - (padding.left + padding.right)), height);
-
-            // Clamp the sprite size based on max width and height of the control
-            if (spriteSize.x > thumbMaxSize.x)
-            {
-                spriteSize *= thumbMaxSize.x / spriteSize.x;
-            }
-
-            if (spriteSize.y > thumbMaxSize.y)
-            {
-                spriteSize *= thumbMaxSize.y / spriteSize.y;
-            }
-
-            // Prepare the rect for the texture draw
-            Rect thumbRect = new Rect(0f, 0f, spriteSize.x, spriteSize.y)
-            {
-                // Position in the middle of the control rect
-                x = controlRect.x + ((controlRect.width - spriteSize.x) / 2f),
-                y = controlRect.y + padding.top + ((height - spriteSize.y) / 2f)
-            };
-
-            // Draw the thumbnail
-            GUI.DrawTextureWithTexCoords(thumbRect, info.targetSprite.texture, spriteRect, true);
-        }
-
-        private void DrawSpritesSimple()
-        {
-            // Get a copy of the sprites list
-            var sprites = m_SPInstance.copyOfSprites;
-            sprites.Sort();
-
-            // Draw the sprites
-            foreach (SPSpriteInfo info in sprites)
-            {
-                EditorGUILayout.Space();
-                EditorGUILayout.BeginHorizontal();
-                GUILayout.Space(8f);
-
-                if (info.targetSprite != null)
-                {
-                    EditorGUILayout.ObjectField(info.targetSprite, typeof(Sprite), false, GUILayout.Height(20f));
-                }
-                else
-                {
-                    EditorGUILayout.TextField("Missing sprite reference");
-                }
-
-                // Remove button
-                if (GUILayout.Button("X", GUILayout.Width(20f)))
-                {
-                    m_SPInstance.QueueAction_RemoveSprite(info);
-                }
-
-                GUILayout.Space(6f);
-                EditorGUILayout.EndHorizontal();
-            }
-
-            EditorGUILayout.Space();
-        }
 
         private void DrawPendingActions()
         {
             if (m_SPInstance == null)
                 return;
 
-            EditorGUILayout.LabelField("Pending Actions", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField($"{m_SPInstance.includedFolders.Count} folder(s) with {m_SPInstance.sprites.Count} sprite(s).", EditorStyles.boldLabel);
 
             float labelWidth = 90f;
 
-            if (m_SPInstance.pendingActions.Count == 0)
+            if (m_SPInstance.includedFolders.Count == 0)
             {
-                DrawMessage("There are no pending actions.");
+                DrawMessage("There are no included folders.");
                 return;
             }
 
             EditorGUILayout.BeginVertical();
 
-            var unqueueList = new List<SPAction>();
+            var toRemoveList = new List<SPFolder>();
 
             // Draw the actions
-            foreach (SPAction action in m_SPInstance.pendingActions)
+            foreach (SPFolder action in m_SPInstance.includedFolders)
             {
-                switch (action.actionType)
+                GUI.color = green;
+                EditorGUILayout.BeginHorizontal(boxStyle);
+                GUI.color = Color.white;
+
+                EditorGUILayout.LabelField("Folder", GUILayout.Width(labelWidth));
+                EditorGUILayout.LabelField(action.FolderPath);
+
+                // Remove folder button
+                if (GUILayout.Button("X", GUILayout.Width(20f)))
                 {
-                    case SPAction.ActionType.Sprite_Add:
-                    {
-                        GUI.color = green;
-                        EditorGUILayout.BeginHorizontal(boxStyle);
-                        GUI.color = Color.white;
-
-                        EditorGUILayout.LabelField("Add Sprite", GUILayout.Width(labelWidth));
-                        EditorGUILayout.ObjectField(action.resource, action.resource.GetType(), false);
-
-                        // Remove action button
-                        if (GUILayout.Button("X", GUILayout.Width(20f)))
-                        {
-                            unqueueList.Add(action);
-                        }
-
-                        EditorGUILayout.EndHorizontal();
-                        break;
-                    }
-                    case SPAction.ActionType.Sprite_Remove:
-                    {
-                        GUI.color = red;
-                        EditorGUILayout.BeginHorizontal(boxStyle);
-                        GUI.color = Color.white;
-
-                        EditorGUILayout.LabelField("Remove Sprite", GUILayout.Width(labelWidth));
-                        EditorGUILayout.ObjectField(action.spriteInfo.targetSprite, typeof(Sprite), false);
-
-                        // Remove action button
-                        if (GUILayout.Button("X", GUILayout.Width(20f)))
-                        {
-                            unqueueList.Add(action);
-                        }
-
-                        EditorGUILayout.EndHorizontal();
-                        break;
-                    }
+                    toRemoveList.Add(action);
                 }
+
+                EditorGUILayout.EndHorizontal();
             }
 
             // Unqueue actions in the list
-            foreach (SPAction a in unqueueList)
+            foreach (SPFolder a in toRemoveList)
             {
-                m_SPInstance.UnqueueAction(a);
+                m_SPInstance.RemoveFolder(a);
             }
 
             EditorGUILayout.EndVertical();
@@ -444,7 +161,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             Rect drop_area = GUILayoutUtility.GetRect(0.0f, 50.0f, GUILayout.ExpandWidth(true));
             boxStyle.alignment = TextAnchor.MiddleCenter;
             GUI.color = green;
-            GUI.Box(drop_area, "Add Sprite (Drop Here)", boxStyle);
+            GUI.Box(drop_area, "＋ Drop Folders Here", boxStyle);
             GUI.color = Color.white;
 
             switch (evt.type)
@@ -461,24 +178,16 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                     {
                         DragAndDrop.AcceptDrag();
 
-                        var filtered = SPTools.FilterResourcesForAtlasImport(DragAndDrop.objectReferences);
+                        var folders = SPTools.FilterFoldersForAtlasImport(DragAndDrop.objectReferences);
 
-                        // Disallow miltiple sprites of the same source, if set so
-                        if (!SPTools.GetEditorPrefBool(SPTools.Settings_AllowMultiSpritesOneSource))
+                        // Ensure folder does not already exist
+                        foreach (SPFolder folder in folders)
                         {
-                            // Additional filtering specific to the instance
-                            for (int i = 0; i < filtered.Length; i++)
-                            {
-                                if (m_SPInstance.sprites.Find(s => s.source == filtered[i]) != null)
-                                {
-                                    Debug.LogWarning("A sprite with source \"" + SPTools.GetAssetPath(filtered[i]) + "\" already exists in the atlas, consider changing the Sprite Packer settings to allow multiple sprites from the same source.");
-                                    System.Array.Clear(filtered, i, 1);
-                                }
-                            }
-                        }
+                            if (m_SPInstance.includedFolders.Contains(folder))
+                                continue;
 
-                        // Types are handled internally
-                        m_SPInstance.QueueAction_AddSprites(filtered);
+                            m_SPInstance.includedFolders.Add(folder);
+                        }
                     }
 
                     break;
@@ -542,9 +251,6 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             // Save the instance id in the editor prefs
             EditorPrefs.SetInt(SPTools.Settings_SavedInstanceIDKey, asset.GetInstanceID());
-
-            // Repaint the SPDropWindow
-            EditorWindow.GetWindow(typeof(SPDropWindow)).Repaint();
 
             // Get a name for the texture
             string texturePath = assetPath.Replace(".asset", ".png");

@@ -165,7 +165,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                         }
                     }
 
-                    EditorUtility.DisplayDialog("Reference Replacer", "Replaced references count: " + replacedCount.ToString(), "Okay");
+                    EditorUtility.DisplayDialog("Reference Replacer", $"Replaced references count: {replacedCount}", "Okay");
                 }
             }
 

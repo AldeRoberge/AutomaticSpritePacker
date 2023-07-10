@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -22,8 +24,8 @@ namespace SimpleSpritePacker
         [SerializeField] private SpriteAlignment m_DefaultPivot       = SpriteAlignment.Center;
         [SerializeField] private Vector2         m_DefaultCustomPivot = new(0.5f, 0.5f);
 
-        [SerializeField] private List<SPSpriteInfo> m_Sprites        = new();
-        [SerializeField] private List<SPAction>     m_PendingActions = new();
+        [SerializeField]                                            private List<SPSpriteInfo> m_Sprites         = new();
+        [FormerlySerializedAs("mIncludedFolders")] [SerializeField] private List<SPFolder>     m_IncludedFolders = new();
 
         /// <summary>
         /// Gets or sets the atlas texture.
@@ -149,9 +151,9 @@ namespace SimpleSpritePacker
         /// Gets the list of pending actions.
         /// </summary>
         /// <value>The pending actions.</value>
-        public List<SPAction> pendingActions
+        public List<SPFolder> includedFolders
         {
-            get { return m_PendingActions; }
+            get { return m_IncludedFolders; }
         }
 
         /// <summary>
@@ -177,109 +179,15 @@ namespace SimpleSpritePacker
         }
 
         /// <summary>
-        /// Queues add sprite action.
-        /// </summary>
-        /// <param name="resource">Resource.</param>
-        public void QueueAction_AddSprite(Object resource)
-        {
-            if (resource is Texture2D || resource is Sprite)
-            {
-                // Check if that sprite is already added to the queue
-                if (m_PendingActions.Find(a => (a.actionType == SPAction.ActionType.Sprite_Add && a.resource == resource)) != null)
-                    return;
-
-                SPAction action = new SPAction
-                {
-                    actionType = SPAction.ActionType.Sprite_Add,
-                    resource = resource
-                };
-                m_PendingActions.Add(action);
-            }
-        }
-
-        /// <summary>
-        /// Queues add sprites action.
-        /// </summary>
-        /// <param name="resources">Resources.</param>
-        public void QueueAction_AddSprites(Object[] resources)
-        {
-            foreach (Object resource in resources)
-            {
-                QueueAction_AddSprite(resource);
-            }
-        }
-
-        /// <summary>
-        /// Queues remove sprite action.
-        /// </summary>
-        /// <param name="spriteInfo">Sprite info.</param>
-        public void QueueAction_RemoveSprite(SPSpriteInfo spriteInfo)
-        {
-            if (spriteInfo == null)
-                return;
-
-            if (!m_Sprites.Contains(spriteInfo))
-                return;
-
-            // Check if that sprite is already added to the queue
-            if (m_PendingActions.Find(a => (a.actionType == SPAction.ActionType.Sprite_Remove && a.spriteInfo == spriteInfo)) != null)
-                return;
-
-            SPAction action = new SPAction
-            {
-                actionType = SPAction.ActionType.Sprite_Remove,
-                spriteInfo = spriteInfo
-            };
-            m_PendingActions.Add(action);
-        }
-
-        /// <summary>
         /// Unqueues action.
         /// </summary>
-        /// <param name="action">Action.</param>
-        public void UnqueueAction(SPAction action)
+        /// <param name="folder">Action.</param>
+        public void RemoveFolder(SPFolder folder)
         {
-            if (m_PendingActions.Contains(action))
-                m_PendingActions.Remove(action);
+            if (m_IncludedFolders.Contains(folder))
+                m_IncludedFolders.Remove(folder);
         }
 
-        /// <summary>
-        /// Gets the a list of add sprite actions.
-        /// </summary>
-        /// <returns>The add sprite actions.</returns>
-        protected List<SPAction> GetAddSpriteActions()
-        {
-            var actions = new List<SPAction>();
-
-            foreach (SPAction action in m_PendingActions)
-            {
-                if (action.actionType == SPAction.ActionType.Sprite_Add)
-                {
-                    actions.Add(action);
-                }
-            }
-
-            return actions;
-        }
-
-        /// <summary>
-        /// Gets a list of remove sprite actions.
-        /// </summary>
-        /// <returns>The remove sprite actions.</returns>
-        protected List<SPAction> GetRemoveSpriteActions()
-        {
-            var actions = new List<SPAction>();
-
-            foreach (SPAction action in m_PendingActions)
-            {
-                if (action.actionType == SPAction.ActionType.Sprite_Remove)
-                {
-                    actions.Add(action);
-                }
-            }
-
-            return actions;
-        }
 
         /// <summary>
         /// Clears the current sprites collection data.
@@ -299,13 +207,6 @@ namespace SimpleSpritePacker
                 m_Sprites.Add(spriteInfo);
         }
 
-        /// <summary>
-        /// Clears the current actions.
-        /// </summary>
-        public void ClearActions()
-        {
-            m_PendingActions.Clear();
-        }
 
         /// <summary>
         /// Gets a sprite list with applied actions.
@@ -315,27 +216,60 @@ namespace SimpleSpritePacker
         {
             // Create temporary sprite info list
             // Add the current sprites
-            var spriteInfoList = m_Sprites.ToList();
-
-            // Apply the remove actions
-            foreach (SPAction ra in GetRemoveSpriteActions())
-            {
-                if (spriteInfoList.Contains(ra.spriteInfo))
-                    spriteInfoList.Remove(ra.spriteInfo);
-            }
+            var spriteInfoList = sprites.ToList();
 
             // Apply the add actions
-            foreach (SPAction asa in GetAddSpriteActions())
+            foreach (SPFolder asa in includedFolders)
             {
-                SPSpriteInfo si = new SPSpriteInfo
+                var assets = GetDirectoryAssets(asa.FolderPath);
+
+                foreach (Object asset in assets)
                 {
-                    source = asa.resource
-                };
-                spriteInfoList.Add(si);
+                    // Ensure is not a duplicate
+                    if (spriteInfoList.Any(si => si.source == asset))
+                        continue;
+
+                    // Ensure is Sprite or Texture2D
+                    SPSpriteInfo si = new SPSpriteInfo
+                    {
+                        source = asset
+                    };
+
+                    spriteInfoList.Add(si);
+                }
             }
 
             // return the list
             return spriteInfoList;
+        }
+
+        /// <summary>
+        /// Gets the assets in the specified directory.
+        /// </summary>
+        /// <returns>The directory assets.</returns>
+        /// <param name="path">Path.</param>
+        public static Object[] GetDirectoryAssets(string path)
+        {
+            var assets = new List<Object>();
+
+            // Get the file paths of all the files in the specified directory
+            string[] assetPaths = Directory.GetFiles(path);
+
+            // Enumerate through the list of files loading the assets they represent
+            foreach (string assetPath in assetPaths)
+            {
+                // Check if it's a meta file
+                if (assetPath.Contains(".meta"))
+                    continue;
+
+                Object objAsset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(Object));
+
+                if (objAsset != null)
+                    assets.Add(objAsset);
+            }
+
+            // Return the array of objects
+            return assets.ToArray();
         }
     }
 }

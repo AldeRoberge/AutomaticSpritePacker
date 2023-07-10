@@ -13,11 +13,8 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
     {
         public static string Settings_UseSpriteThumbsKey         = "SPSettings_UseSpriteThumbs";
         public static string Settings_ThumbsHeightKey            = "SPSettings_SpriteThumbsHeight";
-        public static string Settings_UseScrollViewKey           = "SPSettings_SpriteScrollView";
-        public static string Settings_ScrollViewHeightKey        = "SPSettings_SpriteScrollViewHeight";
         public static string Settings_DisableReadWriteEnabled    = "SPSettings_DisableReadWriteEnabled";
         public static string Settings_AllowMultiSpritesOneSource = "SPSettings_AllowMultiSpritesOneSource";
-        public static string Settings_ShowSpritesKey             = "SP_ShowSprites";
         public static string Settings_SavedInstanceIDKey         = "SP_SavedInstanceID";
 
         /// <summary>
@@ -25,21 +22,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
         /// </summary>
         public static void PrepareDefaultEditorPrefs()
         {
-            if (!EditorPrefs.HasKey(Settings_UseScrollViewKey))
-            {
-                EditorPrefs.SetBool(Settings_UseScrollViewKey, true);
-            }
-
-            if (!EditorPrefs.HasKey(Settings_ScrollViewHeightKey))
-            {
-                EditorPrefs.SetFloat(Settings_ScrollViewHeightKey, 216f);
-            }
-
-            if (!EditorPrefs.HasKey(Settings_ShowSpritesKey))
-            {
-                EditorPrefs.SetBool(Settings_ShowSpritesKey, true);
-            }
-
+           
             if (!EditorPrefs.HasKey(Settings_UseSpriteThumbsKey))
             {
                 EditorPrefs.SetBool(Settings_UseSpriteThumbsKey, true);
@@ -123,7 +106,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 #if !UNITY_4_1 && !UNITY_4_0 && !UNITY_3_5
                 if (!AssetDatabase.IsOpenForEdit(path, StatusQueryOptions.ForceUpdate))
                 {
-                    Debug.LogError(path + " is not editable. Did you forget to do a check out?");
+                    Debug.LogError($"{path} is not editable. Did you forget to do a check out?");
                     return false;
                 }
 #endif
@@ -504,66 +487,33 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             return Directory.Exists(path);
         }
 
-        /// <summary>
-        /// Gets the assets in the specified directory.
-        /// </summary>
-        /// <returns>The directory assets.</returns>
-        /// <param name="path">Path.</param>
-        public static Object[] GetDirectoryAssets(string path)
-        {
-            var assets = new List<Object>();
-
-            // Get the file paths of all the files in the specified directory
-            string[] assetPaths = Directory.GetFiles(path);
-
-            // Enumerate through the list of files loading the assets they represent
-            foreach (string assetPath in assetPaths)
-            {
-                // Check if it's a meta file
-                if (assetPath.Contains(".meta"))
-                    continue;
-
-                Object objAsset = AssetDatabase.LoadAssetAtPath(assetPath, typeof(Object));
-
-                if (objAsset != null)
-                    assets.Add(objAsset);
-            }
-
-            // Return the array of objects
-            return assets.ToArray();
-        }
+        
 
         /// <summary>
         /// Filters the resources for atlas import.
         /// </summary>
         /// <returns>The resources for atlas import.</returns>
         /// <param name="resources">Resources.</param>
-        public static Object[] FilterResourcesForAtlasImport(Object[] resources)
+        public static List<SPFolder> FilterFoldersForAtlasImport(Object[] resources)
         {
-            var tempList = new List<Object>();
+            var tempList = new List<SPFolder>();
 
             foreach (Object resource in resources)
             {
                 string resourcePath = GetAssetPath(resource);
 
-                // Check if this is a main asset and queue all it's sub assets
-                if (IsMainAsset(resource) && HasSubAssets(resource))
+                if (IsDirectory(resourcePath))
                 {
-                    var subAssets = FilterResourcesForAtlasImport(GetSubAssets(resource));
-                    tempList.AddRange(subAssets);
-                }
-                else if (resource is Texture2D || resource is Sprite)
-                {
-                    tempList.Add(resource);
-                }
-                else if (IsDirectory(resourcePath))
-                {
-                    var subAssets = FilterResourcesForAtlasImport(GetDirectoryAssets(resourcePath));
-                    tempList.AddRange(subAssets);
+                    SPFolder folder = new SPFolder
+                    {
+                        FolderPath = resourcePath
+                    };
+
+                    tempList.Add(folder);
                 }
             }
 
-            return tempList.ToArray();
+            return tempList;
         }
 
         /// <summary>

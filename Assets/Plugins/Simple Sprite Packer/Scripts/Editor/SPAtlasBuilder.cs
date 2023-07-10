@@ -91,7 +91,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                     SPSpriteImportData importData = new SPSpriteImportData
                     {
                         // Prepare the sprite name
-                        name = "Sprite_" + ia.ToString()
+                        name = $"Sprite_{ia}"
                     };
 
                     if (si.targetSprite != null)
@@ -210,9 +210,6 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                 // Clear the current sprite info list
                 m_Instance.ClearSprites();
 
-                // Clear the actions list
-                m_Instance.ClearActions();
-
                 // Destroy the textures from the temporary textures array
                 for (int ib = 0; ib < textures.Length; ib++)
                     Object.DestroyImmediate(textures[ib]);
@@ -306,7 +303,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                 // Make the texture readable
                 if (!SPTools.AssetSetReadWriteEnabled(assetPath, enabled, false))
                 {
-                    Debug.LogWarning("Sprite Packer failed to set Read/Write state (" + enabled.ToString() + ") on asset: " + assetPath);
+                    Debug.LogWarning($"Sprite Packer failed to set Read/Write state ({enabled}) on asset: {assetPath}");
                     success = false;
                 }
             }
@@ -361,7 +358,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                         // Set new texture format
                         if (!SPTools.AssetSetFormat(assetPath, TextureImporterFormat.ARGB32))
                         {
-                            Debug.LogWarning("Sprite Packer failed to set texture format ARGB32 on asset: " + assetPath);
+                            Debug.LogWarning($"Sprite Packer failed to set texture format ARGB32 on asset: {assetPath}");
                         }
                     }
                 }
