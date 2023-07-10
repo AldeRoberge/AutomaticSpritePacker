@@ -1,12 +1,8 @@
 {
-    "name": "SimpleSpritePacker.Editor",
-    "rootNamespace": "SimpleSpritePacker.Editor",
-    "references": [
-        "GUID:ad04403d154bb5c45a8af9be5332d1fe"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "name": "SimpleSpritePacker.Runtime",
+    "rootNamespace": "SimpleSpritePacker.Runtime",
+    "references": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

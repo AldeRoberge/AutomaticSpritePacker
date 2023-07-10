@@ -107,8 +107,8 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
         private void MaxSizePopup(SerializedProperty property, string label)
         {
-            string[] names = new string[8] { "32", "64", "128", "256", "512", "1024", "2048", "4096" };
-            int[] sizes = new int[8] { 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+            string[] names = { "32", "64", "128", "256", "512", "1024", "2048", "4096" };
+            int[] sizes = { 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 
             GUI.changed = false;
             int size = EditorGUILayout.IntPopup(label, property.intValue, names, sizes);
@@ -536,7 +536,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                 return;
 
             // Create the sprite packer instance
-            SPInstance asset = ScriptableObject.CreateInstance("SPInstance") as SPInstance;
+            SPInstance asset = ScriptableObject.CreateInstance<SPInstance>();
             AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath(assetPath));
             AssetDatabase.Refresh();
 
