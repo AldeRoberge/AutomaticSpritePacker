@@ -47,12 +47,12 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Texture"), new GUIContent("Atlas Texture"));
             EditorGUILayout.Space();
-            
+
             // Draw the texture preview
             if (m_SPInstance.texture != null)
             {
                 Rect rect = GUILayoutUtility.GetRect(0, 0, GUILayout.ExpandWidth(true), GUILayout.Height(100));
-                
+
                 EditorGUI.DrawPreviewTexture(rect, m_SPInstance.texture, null, ScaleMode.ScaleToFit);
             }
 
@@ -71,21 +71,21 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             serializedObject.ApplyModifiedProperties();
             EditorGUILayout.Space();
-
-            DrawPendingActions();
-            EditorGUILayout.Space();
+            
+            if (m_SPInstance.includedFolders.Count > 0)
+            {
+                DrawRebuildAtlasButton();
+                EditorGUILayout.Space();
+            }
 
             DropAreaGUI();
             EditorGUILayout.Space();
 
-            if (m_SPInstance.includedFolders.Count > 0)
-            {
-                DrawActionButtons();
-                EditorGUILayout.Space();
-            }
+            DrawIncludedFolders();
+            EditorGUILayout.Space();
         }
 
-        private void DrawActionButtons()
+        private void DrawRebuildAtlasButton()
         {
             // Get a rect for the buttons
             Rect controlRect = EditorGUILayout.GetControlRect();
@@ -113,7 +113,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
         private Color c;
 
-        private void DrawPendingActions()
+        private void DrawIncludedFolders()
         {
             if (m_SPInstance == null)
                 return;
@@ -214,9 +214,9 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             boxStyle.alignment = TextAnchor.MiddleCenter;
             boxStyle.normal.textColor = Color.white;
-            
+
             GUI.color = Color.white;
-            
+
             // Set text color
             GUI.backgroundColor = darkGray;
 
