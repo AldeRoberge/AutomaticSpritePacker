@@ -1,0 +1,24 @@
+{
+  "name": "com.alde.automaticspritepacker",
+  "version": "2.0.0",
+  "displayName": "Automatic Sprite Packer",
+  "description": "Automatic Sprite Packer allows to pack sprites into a sprite sheet.",
+  "unity": "2019.1",
+  "unityRelease": "0b5",
+  "documentationUrl": "https://github.com/AldeRoberge/AutomaticSpritePacker/blob/main/Assets/Plugins/Automatic%20Sprite%20Packer/Changelog.txt",
+  "changelogUrl": "https://github.com/AldeRoberge/AutomaticSpritePacker/blob/main/Assets/Plugins/Automatic%20Sprite%20Packer/Changelog.txt",
+  "licensesUrl": "https://github.com/AldeRoberge/AutomaticSpritePacker/blob/main/LICENSE",
+  "dependencies": {
+  },
+  "keywords": [
+    "sprite",
+    "packer",
+    "atlas",
+    "automatic"
+  ],
+  "author": {
+    "name": "Alde",
+    "email": "alderoberge@gmail.com",
+    "url": "alderoberge@gmail.com"
+  }
+}
