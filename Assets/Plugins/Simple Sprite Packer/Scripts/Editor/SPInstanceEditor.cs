@@ -12,8 +12,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
         private SPInstance     m_SPInstance;
         private SPAtlasBuilder m_AtlasBuilder;
 
-        private static Color gray     = new(0.3f, 0.3f, 0.3f, 1f);
-        private static Color darkGray = new(0.3f, 0.3f, 0.3f, 1f);
+        private static Color darkGray = new(0.4f, 0.4f, 0.4f, 1f);
 
         private Vector2 scrollViewOffset           = Vector2.zero;
         private int     m_SelectedSpriteInstanceID = 0;
@@ -48,18 +47,12 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Texture"), new GUIContent("Atlas Texture"));
             EditorGUILayout.Space();
 
-            // Draw the texture preview
-            if (m_SPInstance.texture != null)
-            {
-                Rect rect = GUILayoutUtility.GetRect(0, 0, GUILayout.ExpandWidth(true), GUILayout.Height(100));
-
-                EditorGUI.DrawPreviewTexture(rect, m_SPInstance.texture, null, ScaleMode.ScaleToFit);
-            }
-
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Padding"), new GUIContent("Packing Padding"));
             MaxSizePopup(serializedObject.FindProperty("m_MaxSize"), "Packing Max Size");
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_PackingMethod"));
             EditorGUILayout.Space();
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_DefaultPivot"));
 
             if ((SpriteAlignment)serializedObject.FindProperty("m_DefaultPivot").enumValueIndex != SpriteAlignment.Custom)
@@ -71,18 +64,41 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             serializedObject.ApplyModifiedProperties();
             EditorGUILayout.Space();
-            
-            if (m_SPInstance.includedFolders.Count > 0)
+
+            if (m_SPInstance.includedRootFolders.Count > 0)
             {
                 DrawRebuildAtlasButton();
                 EditorGUILayout.Space();
             }
+
+            EditorGUILayout.Space(12f, true);
 
             DropAreaGUI();
             EditorGUILayout.Space();
 
             DrawIncludedFolders();
             EditorGUILayout.Space();
+
+            if (m_SPInstance.includedRootFolders.Count > 0)
+            {
+                // Get control rect
+                Rect controlRect = EditorGUILayout.GetControlRect();
+
+                GUI.color = Color.red;
+
+                var folderS = m_SPInstance.includedRootFolders.Count > 1 ? "folders" : "folder";
+                var spriteS = m_SPInstance.sprites.Count > 1 ? "sprites" : "sprite";
+
+                if (GUI.Button(controlRect, $"× Remove all {m_SPInstance.sprites.Count} {spriteS} from {m_SPInstance.includedRootFolders.Count} {folderS}"))
+                {
+                    // Remove all sprites
+                    m_SPInstance.sprites.Clear();
+                    m_SPInstance.includedRootFolders.Clear();
+
+                    // Rebuild atlas
+                    m_AtlasBuilder.RebuildAtlas();
+                }
+            }
         }
 
         private void DrawRebuildAtlasButton()
@@ -90,7 +106,11 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             // Get a rect for the buttons
             Rect controlRect = EditorGUILayout.GetControlRect();
 
-            if (GUI.Button(controlRect, "Rebuild Atlas", EditorStyles.miniButton))
+            controlRect.height = 30f;
+
+            GUI.color = Color.green;
+
+            if (GUI.Button(controlRect, "↻ Rebuild Atlas"))
             {
                 m_AtlasBuilder.RebuildAtlas();
             }
@@ -118,11 +138,9 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             if (m_SPInstance == null)
                 return;
 
-            EditorGUILayout.LabelField($"{m_SPInstance.includedFolders.Count} folder(s) with {m_SPInstance.sprites.Count} sprite(s).", EditorStyles.boldLabel);
-
             float labelWidth = 90f;
 
-            if (m_SPInstance.includedFolders.Count == 0)
+            if (m_SPInstance.includedRootFolders.Count == 0)
             {
                 return;
             }
@@ -132,14 +150,32 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             var toRemoveFolder = new List<string>();
 
             // Draw the actions
-            foreach (string folder in m_SPInstance.includedFolders)
+            foreach (string folder in m_SPInstance.includedRootFolders)
             {
-                GUI.color = gray;
+                GUI.color = darkGray;
                 EditorGUILayout.BeginHorizontal(boxStyle);
                 GUI.color = Color.white;
 
-                EditorGUILayout.LabelField("Folder", GUILayout.Width(labelWidth));
+
+                // Draw Unity 'Folder' icon
+                var icon = EditorGUIUtility.IconContent("Folder Icon");
+                var iconRect = GUILayoutUtility.GetRect(icon, GUIStyle.none, GUILayout.Width(20f), GUILayout.Height(20f));
+                GUI.DrawTexture(iconRect, icon.image);
+
+                EditorGUILayout.LabelField("Folder", GUILayout.Width(50));
                 EditorGUILayout.LabelField(folder);
+                
+                // Add 'Open' in explorer button
+                if (GUILayout.Button("Open", GUILayout.Width(40f)))
+                {
+                    EditorUtility.RevealInFinder(folder);
+                }
+                
+                // Add 'Ping' button
+                if (GUILayout.Button("Ping", GUILayout.Width(40f)))
+                {
+                    EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath<Object>(folder));
+                }
 
                 // Remove folder button
                 if (GUILayout.Button("X", GUILayout.Width(20f)))
@@ -170,7 +206,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             GUI.enabled = true;
 
-            DrawMessage("＋ Drop Folders Here", drop_area);
+            DrawMessage("＋ Drag and Drop Root Folders Here", drop_area);
 
             GUI.color = Color.white;
 
@@ -193,10 +229,10 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                         // Ensure folder does not already exist
                         foreach (string folder in folders)
                         {
-                            if (m_SPInstance.includedFolders.Contains(folder))
+                            if (m_SPInstance.includedRootFolders.Contains(folder))
                                 continue;
 
-                            m_SPInstance.includedFolders.Add(folder);
+                            m_SPInstance.includedRootFolders.Add(folder);
                         }
                     }
 

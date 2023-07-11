@@ -503,9 +503,6 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                 if (IsDirectory(resourcePath))
                 {
                     tempList.Add(resourcePath);
-
-                    // Add all sub folders
-                    tempList.AddRange(GetFolderAndAllSubFolders(resourcePath));
                 }
             }
 

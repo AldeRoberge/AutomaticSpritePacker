@@ -19,15 +19,18 @@ MonoBehaviour:
   m_DefaultPivot: 0
   m_DefaultCustomPivot: {x: 0.5, y: 0.5}
   m_Sprites:
+  - source: {fileID: 2800000, guid: e17187da6540bce42993271d1c228501, type: 3}
+    targetSprite: {fileID: 0, guid: b8497db24ca0f1143943331d318afb4a, type: 3}
   - source: {fileID: 2800000, guid: 6944f5d867311df458dfcfcd8f7510c5, type: 3}
     targetSprite: {fileID: 8436319812206783908, guid: b8497db24ca0f1143943331d318afb4a,
       type: 3}
-  - source: {fileID: 2800000, guid: 36f57e0ff89bda84c980898ce5e78bb0, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
+  - source: {fileID: 2800000, guid: 0ea51b838f59a104fb0caf51e898a24c, type: 3}
+    targetSprite: {fileID: -1137258801009352527, guid: b8497db24ca0f1143943331d318afb4a,
       type: 3}
-  - source: {fileID: 2800000, guid: 2c3cf4fba313401458336341d042650b, type: 3}
-    targetSprite: {fileID: 0, guid: b8497db24ca0f1143943331d318afb4a, type: 3}
-  m_IncludedFolders:
-  - Assets/Sprites 1/Sprites 2
-  - Assets/Sprites 1
-  - Assets/Sprites
+  - source: {fileID: 2800000, guid: f934bcf654b98104c85e823a5cc039fa, type: 3}
+    targetSprite: {fileID: 2773243147865682656, guid: b8497db24ca0f1143943331d318afb4a,
+      type: 3}
+  m_SpriteCount: 0
+  m_IncludedRootFolders:
+  - Assets/Sprites2
+  - Assets/Settings

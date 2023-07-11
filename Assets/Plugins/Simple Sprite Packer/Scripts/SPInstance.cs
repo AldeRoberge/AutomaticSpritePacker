@@ -24,8 +24,10 @@ namespace SimpleSpritePacker
         [SerializeField] private SpriteAlignment m_DefaultPivot       = SpriteAlignment.Center;
         [SerializeField] private Vector2         m_DefaultCustomPivot = new(0.5f, 0.5f);
 
-        [SerializeField] private List<SPSpriteInfo> m_Sprites         = new();
-        [SerializeField] private List<string>       m_IncludedFolders = new();
+        [SerializeField] private List<SPSpriteInfo> m_Sprites = new();
+
+        [SerializeField] private int          m_SpriteCount         = 0;
+        [SerializeField] private List<string> m_IncludedRootFolders = new();
 
         /// <summary>
         /// Gets or sets the atlas texture.
@@ -151,9 +153,9 @@ namespace SimpleSpritePacker
         /// Gets the list of pending actions.
         /// </summary>
         /// <value>The pending actions.</value>
-        public List<string> includedFolders
+        public List<string> includedRootFolders
         {
-            get { return m_IncludedFolders; }
+            get { return m_IncludedRootFolders; }
         }
 
         /// <summary>
@@ -184,10 +186,10 @@ namespace SimpleSpritePacker
         /// <param name="folder">Action.</param>
         public void RemoveFolder(string folder)
         {
-            if (m_IncludedFolders.Contains(folder))
-                m_IncludedFolders.Remove(folder);
+            if (m_IncludedRootFolders.Contains(folder))
+                m_IncludedRootFolders.Remove(folder);
         }
-        
+
         /// <summary>
         /// Adds sprite to the sprite collection.
         /// </summary>
@@ -197,7 +199,7 @@ namespace SimpleSpritePacker
             if (spriteInfo != null)
                 m_Sprites.Add(spriteInfo);
         }
-        
+
         /// <summary>
         /// Gets a sprite list with applied actions.
         /// </summary>
@@ -209,10 +211,19 @@ namespace SimpleSpritePacker
 
             sprites.Clear();
 
+            List<string> foldersToRemove = new List<string>();
+
             // Apply the add actions
-            foreach (string includedFolder in includedFolders)
+            foreach (string includedFolder in includedRootFolders)
             {
-                var assets = GetDirectoryAssets(includedFolder);
+                // If folder does not exist, remove it from the list
+                if (!Directory.Exists(includedFolder))
+                {
+                    foldersToRemove.Add(includedFolder);
+                    continue;
+                }
+
+                var assets = GetAssetsInDirectoryIncludingSubfolders(includedFolder);
 
                 foreach (Object asset in assets)
                 {
@@ -221,6 +232,9 @@ namespace SimpleSpritePacker
                         continue;
 
                     // Ensure is Sprite or Texture2D
+                    if (asset is not Sprite && asset is not Texture2D)
+                        continue;
+
                     SPSpriteInfo si = new SPSpriteInfo
                     {
                         source = asset
@@ -229,9 +243,14 @@ namespace SimpleSpritePacker
                     sprites.Add(si);
                 }
             }
-            
-            Debug.Log("sprites.Count: " + sprites.Count);
-            
+
+            // Remove the folders that do not exist
+            foreach (string folder in foldersToRemove)
+            {
+                Debug.Log("Removing folder: " + folder);
+                RemoveFolder(folder);
+            }
+
             // return the list
             return sprites;
         }
@@ -241,12 +260,12 @@ namespace SimpleSpritePacker
         /// </summary>
         /// <returns>The directory assets.</returns>
         /// <param name="path">Path.</param>
-        public static Object[] GetDirectoryAssets(string path)
+        public static List<Object> GetAssetsInDirectoryIncludingSubfolders(string path)
         {
             var assets = new List<Object>();
 
-            // Get the file paths of all the files in the specified directory
-            string[] assetPaths = Directory.GetFiles(path);
+            // Get the file paths of all the files in the specified directory, including subfolders
+            string[] assetPaths = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories);
 
             // Enumerate through the list of files loading the assets they represent
             foreach (string assetPath in assetPaths)
@@ -262,7 +281,7 @@ namespace SimpleSpritePacker
             }
 
             // Return the array of objects
-            return assets.ToArray();
+            return assets;
         }
     }
 }
