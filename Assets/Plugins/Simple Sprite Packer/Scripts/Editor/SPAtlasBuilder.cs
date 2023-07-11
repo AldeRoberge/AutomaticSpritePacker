@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using SimpleSpritePacker;
 using UnityEditor;
 using UnityEngine;
 
-namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
+namespace SimpleSpritePacker.Editor.Plugins.Simple_Sprite_Packer.Scripts.Editor
 {
     public class SPAtlasBuilder
     {

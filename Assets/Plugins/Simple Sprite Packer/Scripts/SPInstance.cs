@@ -211,7 +211,7 @@ namespace SimpleSpritePacker
 
             sprites.Clear();
 
-            List<string> foldersToRemove = new List<string>();
+            var foldersToRemove = new List<string>();
 
             // Apply the add actions
             foreach (string includedFolder in includedRootFolders)

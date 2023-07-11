@@ -28,13 +28,10 @@ namespace SimpleSpritePacker
                 {
                     return targetSprite.name;
                 }
-                else if (source != null)
-                {
-                    return source.name;
-                }
 
                 // Default
-                return string.Empty;
+                return source != null ? source.name :
+                    string.Empty;
             }
         }
 
@@ -68,7 +65,7 @@ namespace SimpleSpritePacker
 
         public int CompareTo(SPSpriteInfo other)
         {
-            return name.CompareTo(other.name);
+            return string.Compare(name, other.name, StringComparison.Ordinal);
         }
     }
 }

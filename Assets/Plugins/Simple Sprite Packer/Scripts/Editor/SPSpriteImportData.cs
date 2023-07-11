@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
+namespace SimpleSpritePacker.Editor.Plugins.Simple_Sprite_Packer.Scripts.Editor
 {
     [System.Serializable]
     public struct SPSpriteImportData

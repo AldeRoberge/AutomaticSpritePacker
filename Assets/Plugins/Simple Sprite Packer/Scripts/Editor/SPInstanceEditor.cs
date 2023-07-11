@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using SimpleSpritePacker;
 using UnityEditor;
 using UnityEngine;
 
-namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
+namespace SimpleSpritePacker.Editor.Plugins.Simple_Sprite_Packer.Scripts.Editor
 {
     [CustomEditor(typeof(SPInstance))]
     public class SPInstanceEditor : UnityEditor.Editor
