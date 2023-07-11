@@ -116,8 +116,8 @@ namespace SimpleSpritePacker.Editor.Plugins.Simple_Sprite_Packer.Scripts.Editor
 
         private void MaxSizePopup(SerializedProperty property, string label)
         {
-            string[] names = { "32", "64", "128", "256", "512", "1024", "2048", "4096" };
-            int[] sizes = { 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+            string[] names = { "32", "64", "128", "256", "512", "1024", "2048", "4096", "8192", "16384" };
+            int[] sizes = { 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384 };
 
             GUI.changed = false;
             int size = EditorGUILayout.IntPopup(label, property.intValue, names, sizes);
@@ -162,13 +162,13 @@ namespace SimpleSpritePacker.Editor.Plugins.Simple_Sprite_Packer.Scripts.Editor
 
                 EditorGUILayout.LabelField("Folder", GUILayout.Width(50));
                 EditorGUILayout.LabelField(folder);
-                
+
                 // Add 'Open' in explorer button
                 if (GUILayout.Button("Open", GUILayout.Width(40f)))
                 {
                     EditorUtility.RevealInFinder(folder);
                 }
-                
+
                 // Add 'Ping' button
                 if (GUILayout.Button("Ping", GUILayout.Width(40f)))
                 {
