@@ -24,8 +24,8 @@ namespace SimpleSpritePacker
         [SerializeField] private SpriteAlignment m_DefaultPivot       = SpriteAlignment.Center;
         [SerializeField] private Vector2         m_DefaultCustomPivot = new(0.5f, 0.5f);
 
-        [SerializeField]                                            private List<SPSpriteInfo> m_Sprites         = new();
-        [FormerlySerializedAs("mIncludedFolders")] [SerializeField] private List<SPFolder>     m_IncludedFolders = new();
+        [SerializeField] private List<SPSpriteInfo> m_Sprites         = new();
+        [SerializeField] private List<string>       m_IncludedFolders = new();
 
         /// <summary>
         /// Gets or sets the atlas texture.
@@ -151,7 +151,7 @@ namespace SimpleSpritePacker
         /// Gets the list of pending actions.
         /// </summary>
         /// <value>The pending actions.</value>
-        public List<SPFolder> includedFolders
+        public List<string> includedFolders
         {
             get { return m_IncludedFolders; }
         }
@@ -182,21 +182,12 @@ namespace SimpleSpritePacker
         /// Unqueues action.
         /// </summary>
         /// <param name="folder">Action.</param>
-        public void RemoveFolder(SPFolder folder)
+        public void RemoveFolder(string folder)
         {
             if (m_IncludedFolders.Contains(folder))
                 m_IncludedFolders.Remove(folder);
         }
-
-
-        /// <summary>
-        /// Clears the current sprites collection data.
-        /// </summary>
-        public void ClearSprites()
-        {
-            m_Sprites.Clear();
-        }
-
+        
         /// <summary>
         /// Adds sprite to the sprite collection.
         /// </summary>
@@ -206,27 +197,27 @@ namespace SimpleSpritePacker
             if (spriteInfo != null)
                 m_Sprites.Add(spriteInfo);
         }
-
-
+        
         /// <summary>
         /// Gets a sprite list with applied actions.
         /// </summary>
         /// <returns>The sprite list with applied actions.</returns>
-        public List<SPSpriteInfo> GetSpriteListWithAppliedActions()
+        public List<SPSpriteInfo> UpdateIncludedSprites()
         {
             // Create temporary sprite info list
             // Add the current sprites
-            var spriteInfoList = sprites.ToList();
+
+            sprites.Clear();
 
             // Apply the add actions
-            foreach (SPFolder asa in includedFolders)
+            foreach (string includedFolder in includedFolders)
             {
-                var assets = GetDirectoryAssets(asa.FolderPath);
+                var assets = GetDirectoryAssets(includedFolder);
 
                 foreach (Object asset in assets)
                 {
                     // Ensure is not a duplicate
-                    if (spriteInfoList.Any(si => si.source == asset))
+                    if (sprites.Any(si => si.source == asset))
                         continue;
 
                     // Ensure is Sprite or Texture2D
@@ -235,12 +226,14 @@ namespace SimpleSpritePacker
                         source = asset
                     };
 
-                    spriteInfoList.Add(si);
+                    sprites.Add(si);
                 }
             }
-
+            
+            Debug.Log("sprites.Count: " + sprites.Count);
+            
             // return the list
-            return spriteInfoList;
+            return sprites;
         }
 
         /// <summary>

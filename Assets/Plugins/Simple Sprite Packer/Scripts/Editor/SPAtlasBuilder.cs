@@ -53,8 +53,10 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             if (SPTools.TextureSetReadWriteEnabled(m_Instance.texture, true, false))
             {
                 // Get a list with the current sprites and applied actions
-                var spriteInfoList = m_Instance.GetSpriteListWithAppliedActions();
+                var spriteInfoList = m_Instance.UpdateIncludedSprites();
 
+                Debug.Log($"Sprite Packer found {spriteInfoList.Count} sprites to pack.");
+                
                 // Get the source textures asset paths
                 string[] sourceTexturePaths = CollectSourceTextureAssetPaths(spriteInfoList);
 
@@ -206,9 +208,6 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
                 // Import and Configure the texture atlas (also disables Read/Write)
                 SPTools.ImportAndConfigureAtlasTexture(m_Instance.texture, tempTexture, uvs, spritesImportData);
-
-                // Clear the current sprite info list
-                m_Instance.ClearSprites();
 
                 // Destroy the textures from the temporary textures array
                 for (int ib = 0; ib < textures.Length; ib++)

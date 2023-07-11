@@ -19,64 +19,15 @@ MonoBehaviour:
   m_DefaultPivot: 0
   m_DefaultCustomPivot: {x: 0.5, y: 0.5}
   m_Sprites:
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: e251efe2a8e2bf845afa30be85a392ea, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
   - source: {fileID: 2800000, guid: 6944f5d867311df458dfcfcd8f7510c5, type: 3}
+    targetSprite: {fileID: 8436319812206783908, guid: b8497db24ca0f1143943331d318afb4a,
+      type: 3}
+  - source: {fileID: 2800000, guid: 36f57e0ff89bda84c980898ce5e78bb0, type: 3}
+    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
+      type: 3}
+  - source: {fileID: 2800000, guid: 2c3cf4fba313401458336341d042650b, type: 3}
     targetSprite: {fileID: 0, guid: b8497db24ca0f1143943331d318afb4a, type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: ad3801b12ebd20643aa23851e5bc51b4, type: 3}
-    targetSprite: {fileID: -4424288023183400369, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 45aa8026cf132264c990cce74437d43d, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
-  - source: {fileID: 2800000, guid: 6944f5d867311df458dfcfcd8f7510c5, type: 3}
-    targetSprite: {fileID: 0, guid: b8497db24ca0f1143943331d318afb4a, type: 3}
-  - source: {fileID: 2800000, guid: e251efe2a8e2bf845afa30be85a392ea, type: 3}
-    targetSprite: {fileID: 324146552540762948, guid: b8497db24ca0f1143943331d318afb4a,
-      type: 3}
   m_IncludedFolders:
-  - FolderPath: Assets/Sprites
-    spriteInfo:
-      source: {fileID: 0}
-      targetSprite: {fileID: 0}
-  - FolderPath: Assets/Sprites 1
-    spriteInfo:
-      source: {fileID: 0}
-      targetSprite: {fileID: 0}
+  - Assets/Sprites 1/Sprites 2
+  - Assets/Sprites 1
+  - Assets/Sprites

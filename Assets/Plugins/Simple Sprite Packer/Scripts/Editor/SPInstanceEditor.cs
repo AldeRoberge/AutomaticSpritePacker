@@ -12,10 +12,8 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
         private SPInstance     m_SPInstance;
         private SPAtlasBuilder m_AtlasBuilder;
 
-        private static Color green                   = new(0.345f, 0.625f, 0.370f, 1f);
-        private static Color red                     = new(0.779f, 0.430f, 0.430f, 1f);
-        private static Color spriteBoxNormalColor    = new(0.897f, 0.897f, 0.897f, 1f);
-        private static Color spriteBoxHighlightColor = new(0.798f, 0.926f, 0.978f, 1f);
+        private static Color gray     = new(0.3f, 0.3f, 0.3f, 1f);
+        private static Color darkGray = new(0.3f, 0.3f, 0.3f, 1f);
 
         private Vector2 scrollViewOffset           = Vector2.zero;
         private int     m_SelectedSpriteInstanceID = 0;
@@ -49,6 +47,14 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Texture"), new GUIContent("Atlas Texture"));
             EditorGUILayout.Space();
+            
+            // Draw the texture preview
+            if (m_SPInstance.texture != null)
+            {
+                Rect rect = GUILayoutUtility.GetRect(0, 0, GUILayout.ExpandWidth(true), GUILayout.Height(100));
+                
+                EditorGUI.DrawPreviewTexture(rect, m_SPInstance.texture, null, ScaleMode.ScaleToFit);
+            }
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Padding"), new GUIContent("Packing Padding"));
             MaxSizePopup(serializedObject.FindProperty("m_MaxSize"), "Packing Max Size");
@@ -118,35 +124,33 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
             if (m_SPInstance.includedFolders.Count == 0)
             {
-                DrawMessage("There are no included folders.");
                 return;
             }
 
             EditorGUILayout.BeginVertical();
 
-            var toRemoveList = new List<SPFolder>();
+            var toRemoveFolder = new List<string>();
 
             // Draw the actions
-            foreach (SPFolder action in m_SPInstance.includedFolders)
+            foreach (string folder in m_SPInstance.includedFolders)
             {
-                GUI.color = green;
+                GUI.color = gray;
                 EditorGUILayout.BeginHorizontal(boxStyle);
                 GUI.color = Color.white;
 
                 EditorGUILayout.LabelField("Folder", GUILayout.Width(labelWidth));
-                EditorGUILayout.LabelField(action.FolderPath);
+                EditorGUILayout.LabelField(folder);
 
                 // Remove folder button
                 if (GUILayout.Button("X", GUILayout.Width(20f)))
                 {
-                    toRemoveList.Add(action);
+                    toRemoveFolder.Add(folder);
                 }
 
                 EditorGUILayout.EndHorizontal();
             }
 
-            // Unqueue actions in the list
-            foreach (SPFolder a in toRemoveList)
+            foreach (string a in toRemoveFolder)
             {
                 m_SPInstance.RemoveFolder(a);
             }
@@ -160,8 +164,14 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             Event evt = Event.current;
             Rect drop_area = GUILayoutUtility.GetRect(0.0f, 50.0f, GUILayout.ExpandWidth(true));
             boxStyle.alignment = TextAnchor.MiddleCenter;
-            GUI.color = green;
-            GUI.Box(drop_area, "＋ Drop Folders Here", boxStyle);
+            GUI.color = darkGray;
+
+            //Set box text color to white
+
+            GUI.enabled = true;
+
+            DrawMessage("＋ Drop Folders Here", drop_area);
+
             GUI.color = Color.white;
 
             switch (evt.type)
@@ -181,7 +191,7 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
                         var folders = SPTools.FilterFoldersForAtlasImport(DragAndDrop.objectReferences);
 
                         // Ensure folder does not already exist
-                        foreach (SPFolder folder in folders)
+                        foreach (string folder in folders)
                         {
                             if (m_SPInstance.includedFolders.Contains(folder))
                                 continue;
@@ -195,10 +205,21 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             }
         }
 
-        private void DrawMessage(string message)
+        private void DrawMessage(string message, Rect rect = default)
         {
-            Rect rect = GUILayoutUtility.GetRect(0.0f, 25.0f, GUILayout.ExpandWidth(true));
+            GUI.enabled = true;
+
+            if (rect == default)
+                rect = GUILayoutUtility.GetRect(0.0f, 25.0f, GUILayout.ExpandWidth(true));
+
             boxStyle.alignment = TextAnchor.MiddleCenter;
+            boxStyle.normal.textColor = Color.white;
+            
+            GUI.color = Color.white;
+            
+            // Set text color
+            GUI.backgroundColor = darkGray;
+
             GUI.Box(rect, message, boxStyle);
         }
 

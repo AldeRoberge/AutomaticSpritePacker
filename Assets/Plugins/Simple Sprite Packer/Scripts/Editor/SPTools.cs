@@ -22,7 +22,6 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
         /// </summary>
         public static void PrepareDefaultEditorPrefs()
         {
-           
             if (!EditorPrefs.HasKey(Settings_UseSpriteThumbsKey))
             {
                 EditorPrefs.SetBool(Settings_UseSpriteThumbsKey, true);
@@ -487,16 +486,15 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
             return Directory.Exists(path);
         }
 
-        
 
         /// <summary>
         /// Filters the resources for atlas import.
         /// </summary>
         /// <returns>The resources for atlas import.</returns>
         /// <param name="resources">Resources.</param>
-        public static List<SPFolder> FilterFoldersForAtlasImport(Object[] resources)
+        public static List<string> FilterFoldersForAtlasImport(Object[] resources)
         {
-            var tempList = new List<SPFolder>();
+            var tempList = new List<string>();
 
             foreach (Object resource in resources)
             {
@@ -504,16 +502,30 @@ namespace Plugins.Simple_Sprite_Packer.Scripts.Editor
 
                 if (IsDirectory(resourcePath))
                 {
-                    SPFolder folder = new SPFolder
-                    {
-                        FolderPath = resourcePath
-                    };
+                    tempList.Add(resourcePath);
 
-                    tempList.Add(folder);
+                    // Add all sub folders
+                    tempList.AddRange(GetFolderAndAllSubFolders(resourcePath));
                 }
             }
 
             return tempList;
+        }
+
+        private static IEnumerable<string> GetFolderAndAllSubFolders(string resourcePath)
+        {
+            // Get all sub folders
+            string[] subFolders = Directory.GetDirectories(resourcePath, "*", SearchOption.AllDirectories);
+
+            // Ensure all \ are replaced with /
+
+            for (int i = 0; i < subFolders.Length; i++)
+            {
+                subFolders[i] = subFolders[i].Replace("\\", "/");
+            }
+
+            // Add all sub folders
+            return subFolders;
         }
 
         /// <summary>

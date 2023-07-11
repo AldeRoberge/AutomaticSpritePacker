@@ -48,13 +48,12 @@ namespace SimpleSpritePacker
             {
                 if (source != null)
                 {
-                    if (source is Texture2D)
+                    switch (source)
                     {
-                        return new Vector2((source as Texture2D).width, (source as Texture2D).height);
-                    }
-                    else if (source is Sprite)
-                    {
-                        return (source as Sprite).rect.size;
+                        case Texture2D texture2D:
+                            return new Vector2(texture2D.width, texture2D.height);
+                        case Sprite sprite:
+                            return sprite.rect.size;
                     }
                 }
                 else if (targetSprite != null)

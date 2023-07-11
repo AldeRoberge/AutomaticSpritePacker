@@ -123,265 +123,55 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 0
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 1026
-        y: 0
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 257
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 257
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 1026
-        y: 257
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 514
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 514
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 1026
-        y: 514
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 771
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 771
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 1026
-        y: 771
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: bateau12
       rect:
         serializedVersion: 2
         x: 0
-        y: 1028
-        width: 512
-        height: 256
+        y: 0
+        width: 618
+        height: 334
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4adec22fb24d31570800000000000000
+      internalID: 8436319812206783908
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: bateau1
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 0
+        width: 263
+        height: 221
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f42632adb75c992c0800000000000000
+      internalID: -4424288023183400369
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: 223
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 222
+        width: 263
+        height: 221
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -391,111 +181,6 @@ TextureImporter:
       bones: []
       spriteID: 00000000000000000800000000000000
       internalID: 0
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 1285
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau1
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 1542
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f42632adb75c992c0800000000000000
-      internalID: -4424288023183400369
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 1028
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: bateau12
-      rect:
-        serializedVersion: 2
-        x: 1026
-        y: 1028
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 00000000000000000800000000000000
-      internalID: 0
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Bateau2
-      rect:
-        serializedVersion: 2
-        x: 513
-        y: 1285
-        width: 512
-        height: 256
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4431c5772999f7400800000000000000
-      internalID: 324146552540762948
       vertices: []
       indices: 
       edges: []
@@ -511,9 +196,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      Bateau2: 324146552540762948
+      223: 0
+      3: -5906598218874874896
       bateau1: -4424288023183400369
-      bateau12: 0
+      bateau12: 8436319812206783908
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
