@@ -128,7 +128,6 @@ namespace SimpleSpritePacker.Editor.Plugins.Simple_Sprite_Packer.Scripts.Editor
             }
         }
 
-
         private Color c;
 
         private void DrawIncludedFolders()
